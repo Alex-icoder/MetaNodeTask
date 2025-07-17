@@ -26,7 +26,6 @@ func receiveMessage(ch <-chan int, wg *sync.WaitGroup) {
 func main_Channel() {
 	//题目1
 	ch := make(chan int)
-
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go sendMessage(ch, &wg)
