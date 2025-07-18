@@ -7,18 +7,20 @@ import (
 
 type User struct {
 	gorm.Model
-	UserName string `gorm:"size:20;uniqueIndex;not null"`
-	Email    string `gorm:"size:50;uniqueIndex;not null"`
-	Password string `gorm:"size:255;not null"`
-	Posts    []Post
+	UserName  string `gorm:"size:20;uniqueIndex;not null"`
+	Email     string `gorm:"size:50;uniqueIndex;not null"`
+	Password  string `gorm:"size:255;not null"`
+	PostCount int    `gorm:"default:0"`
+	Posts     []Post
 }
 
 type Post struct {
 	gorm.Model
-	Title    string `gorm:"size:50;not null"`
-	Content  string `gorm:"type:text;not null"`
-	UserId   uint
-	Comments []Comment
+	Title        string `gorm:"size:50;not null"`
+	Content      string `gorm:"type:text;not null"`
+	UserId       uint
+	CommentCount int       `gorm:"default:0"`
+	Comments     []Comment `gorm:"constraint:OnDelete:CASCADE;"`
 }
 
 type Comment struct {
@@ -76,6 +78,17 @@ func main_关联查询() {
 		fmt.Println("评论数量最多的文章信息:")
 		fmt.Printf("文章id:%d,标题:%s,内容:%s,用户id:%d", post.ID, post.Title, post.Content, post.UserId)
 	}
+}
+
+func main_钩子函数() {
+	db := getGorm()
+	//在文章创建时自动更新用户的文章数量统计字段
+	createTestData(db)
+	//在评论删除时检查文章的评论数量，如果评论数量为 0，则更新文章的评论状态为 "无评论"。
+	comment := Comment{
+		PostId: 14,
+	}
+	db.Debug().Where("post_id=?", 14).Delete(&comment)
 }
 
 // 创建测试数据
@@ -138,4 +151,33 @@ func createTestData(db *gorm.DB) {
 		UserId:  user2.ID,
 	}
 	db.Create(&post4)
+}
+
+func (p *Post) AfterCreate(tx *gorm.DB) (err error) {
+	var user = User{
+		Model: gorm.Model{ID: p.UserId},
+	}
+	count := tx.Debug().Model(&user).Association("Posts").Count()
+	if err := tx.Debug().Model(&user).Update("PostCount", count).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Comment) AfterDelete(tx *gorm.DB) (err error) {
+	var post = Post{
+		Model: gorm.Model{ID: c.PostId},
+	}
+	count := tx.Debug().Model(&post).Association("Comments").Count()
+	tx.Debug().Model(&post).Where("").Update("comment_count", count)
+	return nil
+}
+
+func (c *Comment) AfterCreate(tx *gorm.DB) (err error) {
+	var post = Post{
+		Model: gorm.Model{ID: c.PostId},
+	}
+	count := tx.Debug().Model(&post).Association("Comments").Count()
+	tx.Debug().Model(&post).Update("comment_count", count)
+	return nil
 }
