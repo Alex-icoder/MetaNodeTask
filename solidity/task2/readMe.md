@@ -7,7 +7,7 @@ BeggingContract合约地址： 0xB918d51B05b7155637776Fd86fee70DbD6D48161
 
 # 测试截图
 - NFTContract测试
-![](static/nfttask.png)
+static/nfttask.png
 - BeggingContract测试
-![](static/beggingtask.png)
+static/beggingtask.png
 
