@@ -1,0 +1,16 @@
+# 忽略特定文件
+.DS_Store       # macOS 系统文件
+*.log           # 所有 .log 后缀的文件
+config.ini      # 特定配置文件
+
+# 忽略目录
+node_modules/   # Node.js 依赖目录
+dist/           # 构建输出目录
+venv/           # Python 虚拟环境
+.idea/          # IDEA 编辑器配置
+.vscode/        # VS Code 配置
+
+
+# 忽略特定模式
+*/temp/*        # 任何目录下的 temp 目录中的文件
+!important.log  # 例外：不忽略 important.log（前面加 !）
