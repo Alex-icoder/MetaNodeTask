@@ -139,12 +139,12 @@ task3/
 示例 .env.example：
 ```
 PRIVATE_KEY=0x...
-RPC_SEPOLIA=https://sepolia.infura.io/v3/xxx
-ROUTER_ADDRESS=0xRouter
-ETH_PRICE_FEED=0xEthUsdFeed
+RPC_SEPOLIA=https://sepolia.infura.io/v3/xxxxx
+ROUTER_ADDRESS=0xMockOrRealRouter
+ETH_PRICE_FEED=0xEthUsdAggregator
 FEE_PERCENT=250
-FEE_RECIPIENT=0xFeeRecipient
-ADMIN=0xAdmin
+FEE_RECIPIENT=0xFeeRecipientAddress
+ADMIN=0xAdminAddress
 ```
 
 复制为 .env 并填充。
